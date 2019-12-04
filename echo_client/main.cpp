@@ -40,27 +40,11 @@ int main(int argc, char* argv[]) {
 	}
 	printf("connected\n");
 
-	while (true) {
-		const static int BUFSIZE = 1024;
-		char buf[BUFSIZE];
+	thread t1(send_msg, sockfd);
+	thread t2(recv_msg, sockfd);
 
-		scanf("%s", buf);
-		if (strcmp(buf, "quit") == 0) break;
-
-		ssize_t sent = send(sockfd, buf, strlen(buf), 0);
-		if (sent == 0) {
-			perror("send failed");
-			break;
-		}
-
-		ssize_t received = recv(sockfd, buf, BUFSIZE - 1, 0);
-		if (received == 0 || received == -1) {
-			perror("recv failed");
-			break;
-		}
-		buf[received] = '\0';
-		printf("%s\n", buf);
-	}
+	t1.detach();
+	t2.join();
 
 	close(sockfd);
 }

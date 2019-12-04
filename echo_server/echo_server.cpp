@@ -17,7 +17,7 @@ void connection(int fd, bool broadcast) {
                        break;
                 }
                 buf[received] = '\0';
-		printf("%s\n", buf);
+		printf("Client #%d msg: %s\n", fd, buf);
 		if(broadcast) {
 			bool flg = false;
 			for(vector<int>::iterator it = childfd.begin(); it != childfd.end(); it++) {
@@ -38,12 +38,15 @@ void connection(int fd, bool broadcast) {
 			}
                 }
         }
-	for(int i = 0; i < childfd.size(); i++) {
-		if(childfd[i] == fd) {
+	for(vector<int>::iterator it = childfd.begin(); it != childfd.end();) {
+		if(*it == fd) {
+			printf("Client #%d disconnected\n", *it);
 			m.lock();
-			childfd.erase(childfd.begin() + i);
+			childfd.erase(it);
 			m.unlock();
 		}
+		else 
+			it++;
 	}
 	return;
 }

@@ -59,16 +59,16 @@ int main(int argc, char* argv[]) {
 		struct sockaddr_in addr;
 		socklen_t clientlen = sizeof(sockaddr);
 		int child = accept(sockfd, reinterpret_cast<struct sockaddr*>(&addr), &clientlen);
-		if(broadcast) {
-			m.lock();	
-			childfd.push_back(child);
-			m.unlock();
-		}
+
+		m.lock();	
+		childfd.push_back(child);
+		m.unlock();
+
 		if (child < 0) {
 			perror("ERROR on accept");
 			break;
 		}
-		printf("connected\n");
+		printf("Client #%d connected\n", child);
 		
 		if(child > 0) {
 			thread t(connection, child, broadcast);

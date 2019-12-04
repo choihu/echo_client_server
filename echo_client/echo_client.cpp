@@ -19,3 +19,36 @@ void parse_IP(char* ip, uint8_t* out) {
   }
   return;
 }
+
+void send_msg(int sockfd) {
+	while(true) {
+		const static int BUFSIZE = 1024;
+                char buf[BUFSIZE];
+                scanf("%s", buf);
+                if (strcmp(buf, "quit") == 0) break;
+
+                ssize_t sent = send(sockfd, buf, strlen(buf), 0);
+                if (sent == 0) {
+                        perror("send failed");
+                        break;
+                }
+	}
+	return;
+}
+
+void recv_msg(int sockfd) {
+	while(true) {
+		const static int BUFSIZE = 1024;
+                char buf[BUFSIZE];
+		
+		ssize_t received = recv(sockfd, buf, BUFSIZE - 1, 0);
+                if (received == 0 || received == -1) {
+                        perror("recv failed");
+                        break;
+                }
+                buf[received] = '\0';
+                printf("recv msg: %s\n", buf);
+	}
+	return;
+}
+
